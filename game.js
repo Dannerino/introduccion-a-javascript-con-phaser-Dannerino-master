@@ -8,20 +8,41 @@ var cursors;
 var jumpButton;
 var text;
 var winningMessage;
+var message;
 var won = false;
+var died = false;
 var currentScore = 0;
 var winningScore = 100;
 
 // add collectable items to the game
 function addItems() {
   items = game.add.physicsGroup();
-  createItem(375, 300, 'coin');
+  createItem(180, 180, 'coin');
+  createItem(40, 240, 'coin');
+  createItem(500, 90, 'coin');
+  createItem(620, 200, 'coin');
+  createItem(500, 250, 'coin');
+  createItem(230, 450, 'coin');
+  createItem(320, 350, 'coin');
+  createItem(550, 450, 'coin');
+  createItem(125, 50, 'star');
+  createItem(370, 500, 'poison');
+  createItem(100, 375, 'poison');
 }
 
 // add platforms to the game
 function addPlatforms() {
   platforms = game.add.physicsGroup();
-  platforms.create(450, 150, 'platform');
+  platforms.create(250, 400, 'platform2');
+  platforms.create(450, 150, 'platform2');
+  platforms.create(200, 130, 'platform');
+  platforms.create(100, 230, 'platform');
+  platforms.create(30, 290, 'platform');
+  platforms.create(600, 250, 'platform');
+  platforms.create(80, 80, 'platform2');
+  platforms.create(400, 300, 'platform2');
+  platforms.create(450, 500, 'platform');
+  platforms.create(100, 500, 'platform');
   platforms.setAll('body.immovable', true);
 }
 
@@ -43,9 +64,18 @@ function createBadge() {
 // when the player collects an item on the screen
 function itemHandler(player, item) {
   item.kill();
-  currentScore = currentScore + 10;
-  if (currentScore === winningScore) {
-      createBadge();
+  if (item.key == 'coin') {
+    currentScore = currentScore + 10;
+
+  } else if (item.key == 'poison') {
+
+    currentScore = currentScore - 10;
+  } else if (item.key == 'star') {
+
+    currentScore = currentScore + 25;
+  }
+  if (currentScore >= winningScore) {
+    createBadge();
   }
 }
 
@@ -58,18 +88,21 @@ function badgeHandler(player, badge) {
 // setup game when the web page loads
 window.onload = function () {
   game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render });
-  
+
   // before the game begins
   function preload() {
     game.stage.backgroundColor = '#5db1ad';
-    
+
     //Load images
     game.load.image('platform', 'platform_1.png');
-    
+    game.load.image('platform2', 'platform_2.png');
+
     //Load spritesheets
     game.load.spritesheet('player', 'chalkers.png', 48, 62);
     game.load.spritesheet('coin', 'coin.png', 36, 44);
     game.load.spritesheet('badge', 'badge.png', 42, 54);
+    game.load.spritesheet('poison', 'poison.png', 32, 32);
+    game.load.spritesheet('star', 'star.png', 32, 32);
   }
 
   // initial game set up
@@ -89,6 +122,7 @@ window.onload = function () {
     text = game.add.text(16, 16, "SCORE: " + currentScore, { font: "bold 24px Arial", fill: "white" });
     winningMessage = game.add.text(game.world.centerX, 275, "", { font: "bold 48px Arial", fill: "white" });
     winningMessage.anchor.setTo(0.5, 1);
+   
   }
 
   // while the game is running
@@ -115,7 +149,7 @@ window.onload = function () {
     else {
       player.animations.stop();
     }
-    
+
     if (jumpButton.isDown && (player.body.onFloor() || player.body.touching.down)) {
       player.body.velocity.y = -400;
     }
@@ -123,6 +157,7 @@ window.onload = function () {
     if (won) {
       winningMessage.text = "YOU WIN!!!";
     }
+    
   }
 
   function render() {
